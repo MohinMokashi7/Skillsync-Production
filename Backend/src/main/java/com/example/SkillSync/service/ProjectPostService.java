@@ -110,12 +110,14 @@ public class ProjectPostService {
     public List<ProjectPostDto> getAllOpenPosts() {
         //  Fetch ALL posts with public visibility and open status from the database
         List<ProjectPost> posts = projectPostRepository.findByVisibilityAndStatus("PUBLIC" ,"OPEN");
-
+        System.out.println("Inside getAllProjects");
         // Filter & Convert
         return posts.stream()
                 .map(this::mapToDto)                          // Convert Entity -> DTO using your helper
                 .collect(Collectors.toList());                                   // Pack it back into a List
     }
+
+
 
 
     public ProjectPostDto getProjectPostById(Long id) {

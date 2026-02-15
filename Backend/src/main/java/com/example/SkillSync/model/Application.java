@@ -19,7 +19,8 @@ public class Application {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Lob
+
+    @Column(columnDefinition = "TEXT")
     private String coverletter;
 
     @Column(nullable = false)
