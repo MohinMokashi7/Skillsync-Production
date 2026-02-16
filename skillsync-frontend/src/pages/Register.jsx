@@ -36,7 +36,14 @@ function Register() {
       setError("Passwords do not match");
       return;
     }
+     //Initialize loading state
+    setLoading(true);
+    setLoadingMessage("Creating your account...");
 
+    // Timer for slow server wake-up
+    const slowServerTimer = setTimeout(() => {
+      setLoadingMessage("Waking up server... this may take up to 30 seconds.");
+    }, 8000);
     try {
       await axiosInstance.post("/auth/register", {
         name: formData.name,

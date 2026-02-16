@@ -17,6 +17,13 @@ import ProjectApplications from "./pages/ProjectApplications";
 
 
 function App() {
+
+  // 🔥 Silent backend wake-up
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/ping`)
+      .catch(() => {});
+  }, []);
+  
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
