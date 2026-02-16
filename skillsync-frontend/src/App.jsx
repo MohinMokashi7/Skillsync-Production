@@ -14,6 +14,7 @@ import Navbar from "./components/Navbar"
 import PublicRoute from "./components/PublicRoute";
 import ApplyProject from "./pages/ApplyProject";
 import ProjectApplications from "./pages/ProjectApplications";
+import { useEffect } from "react";
 
 
 function App() {
@@ -23,7 +24,7 @@ function App() {
     fetch(`${import.meta.env.VITE_API_BASE_URL}/api/ping`)
       .catch(() => {});
   }, []);
-  
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
