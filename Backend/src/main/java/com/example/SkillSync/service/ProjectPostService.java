@@ -106,16 +106,20 @@ public class ProjectPostService {
 
     }
 
-//shows post with open status only
-    public List<ProjectPostDto> getAllOpenPosts() {
-        //  Fetch ALL posts with public visibility and open status from the database
-        List<ProjectPost> posts = projectPostRepository.findByVisibilityAndStatus("PUBLIC" ,"OPEN");
-        System.out.println("Inside getAllProjects");
-        // Filter & Convert
-        return posts.stream()
-                .map(this::mapToDto)                          // Convert Entity -> DTO using your helper
-                .collect(Collectors.toList());                                   // Pack it back into a List
-    }
+//shows post with open status only and excluding projects of same logged in user
+public List<ProjectPostDto> getAllOpenPosts(String currentUserEmail) {
+
+    List<ProjectPost> posts =
+            projectPostRepository.findOpenPublicProjectsExcludingOwner(
+                    "PUBLIC",
+                    "OPEN",
+                    currentUserEmail
+            );
+
+    return posts.stream()
+            .map(this::mapToDto)
+            .collect(Collectors.toList());
+}
 
 
 
@@ -154,11 +158,11 @@ public class ProjectPostService {
 
     }
 //searches project with keyword when that word is mentioned in that project title desc,skill anything mentioned in repo
-    public List<ProjectPostDto> searchProject(String keyword) {
+    public List<ProjectPostDto> searchProject(String keyword,String currentUserEmail) {
         //checking if user searched empty keyword
         // .trim() makes sure all white spaces before or after word are remover but not removing whitespace between two texts
         if (keyword == null || keyword.trim().isEmpty()) {
-            return getAllOpenPosts();
+            return getAllOpenPosts(currentUserEmail);
         }
 
         List<ProjectPost> search=projectPostRepository.searchProjects(keyword.trim());

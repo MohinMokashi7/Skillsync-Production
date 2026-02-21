@@ -25,11 +25,20 @@ public interface ProjectPostRepository extends JpaRepository<ProjectPost, Long> 
             ") " +
             "AND p.status = 'OPEN' " +
             "AND p.visibility = 'PUBLIC'")
-
     List<ProjectPost> searchProjects(@Param("keyword") String keyword);
 
     List<ProjectPost> findByCategory(String category);
-    List<ProjectPost> findByVisibilityAndStatus(String visibility,String status);
+    @Query("""
+    SELECT p FROM ProjectPost p
+    WHERE p.visibility = :visibility
+    AND p.status = :status
+    AND p.owner.email != :email
+""")
+    List<ProjectPost> findOpenPublicProjectsExcludingOwner(
+            @Param("visibility") String visibility,
+            @Param("status") String status,
+            @Param("email") String email
+    );
     List<ProjectPost> findByOwnerEmail(String email);
 
 }

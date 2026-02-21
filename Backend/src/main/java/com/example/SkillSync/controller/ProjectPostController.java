@@ -27,9 +27,9 @@ public class ProjectPostController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProjectPostDto>> showProject(){
+    public ResponseEntity<List<ProjectPostDto>> showProject(Principal principal){
 
-        List<ProjectPostDto> posts = postService.getAllOpenPosts();
+        List<ProjectPostDto> posts = postService.getAllOpenPosts(principal.getName());
 
         // 2. Return the list with 200 OK
         return ResponseEntity.ok(posts);
@@ -54,7 +54,7 @@ public class ProjectPostController {
         return ResponseEntity.ok(updatedPost);
     }
     @GetMapping("/search")
-    public ResponseEntity<List<ProjectPostDto>> searchProject(@RequestParam String keyword){
-        return ResponseEntity.ok(postService.searchProject(keyword));
+    public ResponseEntity<List<ProjectPostDto>> searchProject(@RequestParam String keyword,Principal principal){
+        return ResponseEntity.ok(postService.searchProject(keyword, principal.getName()));
     }
 }
