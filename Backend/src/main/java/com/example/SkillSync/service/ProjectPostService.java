@@ -165,7 +165,7 @@ public List<ProjectPostDto> getAllOpenPosts(String currentUserEmail) {
             return getAllOpenPosts(currentUserEmail);
         }
 
-        List<ProjectPost> search=projectPostRepository.searchProjects(keyword.trim());
+        List<ProjectPost> search=projectPostRepository.searchProjects(keyword.trim(),currentUserEmail);
 
 
 

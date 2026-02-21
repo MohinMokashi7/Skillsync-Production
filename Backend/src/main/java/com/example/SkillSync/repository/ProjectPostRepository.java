@@ -24,8 +24,9 @@ public interface ProjectPostRepository extends JpaRepository<ProjectPost, Long> 
             "    LOWER(s) LIKE LOWER(CONCAT('%', :keyword, '%')) " + // <--- FIXED: 's' is the string itself
             ") " +
             "AND p.status = 'OPEN' " +
-            "AND p.visibility = 'PUBLIC'")
-    List<ProjectPost> searchProjects(@Param("keyword") String keyword);
+            "AND p.visibility = 'PUBLIC'"+
+             "AND p.owner.email != :email")
+    List<ProjectPost> searchProjects(@Param("keyword") String keyword,@Param("email") String email);
 
     List<ProjectPost> findByCategory(String category);
     @Query("""
