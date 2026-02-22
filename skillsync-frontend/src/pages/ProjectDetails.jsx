@@ -138,7 +138,7 @@ function ProjectDetails() {
         </div>
 
         {/* Apply Button Logic */}
-        {project.status === "OPEN" && project.ownerEmail !== user.email && (
+        {project.status === "OPEN" && project.ownerEmail !== profile?.email && (
           <div className="mt-8 text-right">
             {token ? (
               <button

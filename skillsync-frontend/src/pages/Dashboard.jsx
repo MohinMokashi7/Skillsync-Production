@@ -204,7 +204,7 @@ function Dashboard() {
                         View Details
                       </button>
 
-                      {project.status === "OPEN" && project.ownerEmail !== user.email &&(
+                      {project.status === "OPEN" && project.ownerEmail !== profile?.email &&(
                         <button
                           onClick={() => navigate(`/apply/${project.id}`)}
                           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
