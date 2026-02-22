@@ -8,14 +8,25 @@ function ProjectDetails() {
 
   const [project, setProject] = useState(null);
   const [error, setError] = useState("");
+const [profile, setProfile] = useState(null);
 
+useEffect(() => {
+  fetchProject();
+  fetchProfile();
+}, []);
+
+const fetchProfile = async () => {
+  try {
+    const response = await axiosInstance.get("/about/profile");
+    setProfile(response.data);
+  } catch {
+    setProfile(null);
+  }
+};
   // Check for token to determine if user is logged in
   const token = localStorage.getItem("token");
 
-  useEffect(() => {
-    fetchProject();
-  }, []);
-
+  
   const fetchProject = async () => {
     try {
       const response = await axiosInstance.get(`/projects/${id}`);
