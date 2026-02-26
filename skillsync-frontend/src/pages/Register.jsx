@@ -36,31 +36,43 @@ function Register() {
       setError("Passwords do not match");
       return;
     }
-     //Initialize loading state
-    setLoading(true);
-    setLoadingMessage("Creating your account...");
+  
 
     // Timer for slow server wake-up
     const slowServerTimer = setTimeout(() => {
-      setLoadingMessage("Waking up server... this may take up to 30 seconds.");
-    }, 8000);
-    try {
-      await axiosInstance.post("/auth/register", {
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-        phone: formData.phone,
-      });
+  setLoadingMessage("Waking up server... this may take up to 30 seconds.");
+}, 8000);
 
-      setSuccess("Registered successfully! Redirecting to login...");
+try {
+  // 1️⃣ Register user
+  await axiosInstance.post("/auth/register", {
+    name: formData.name,
+    email: formData.email,
+    password: formData.password,
+    phone: formData.phone,
+  });
 
-      setTimeout(() => {
-        navigate("/login");
-      }, 1500);
+  // 2️⃣ Immediately login
+  const loginResponse = await axiosInstance.post("/auth/login", {
+    username: formData.email,
+    password: formData.password,
+  });
+console.log("LOGIN RESPONSE:", loginResponse.data);
+  // 3️⃣ Store JWT
+  localStorage.setItem("token", loginResponse.data.accessToken);
 
-    } catch (err) {
-      setError("Registration failed. Email may already exist.");
-    }
+  setSuccess("Account created! Redirecting to dashboard...");
+
+  setTimeout(() => {
+    navigate("/dashboard");
+  }, 1200);
+
+} catch (err) {
+  console.log("REGISTER ERROR:", err.response);
+  setError(err.response?.data?.message || "Registration failed.");
+} finally {
+  clearTimeout(slowServerTimer);
+}
   };
 
   return (

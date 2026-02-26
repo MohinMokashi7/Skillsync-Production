@@ -141,7 +141,17 @@ for (String skill : requiredSkills) {
     }
 
 
+    public void recalculateProjectStatus(ProjectPost project) {
 
+        long acceptedCount = applicationRepository
+                .countByProjectPostIdAndStatus(project.getId(), "ACCEPTED");
+
+        if (acceptedCount >= project.getTeamSize()) {
+            project.setStatus("CLOSED");
+        } else {
+            project.setStatus("OPEN");
+        }
+    }
 
     public void updateApplicationStatus(String ownerEmail, Long applicationId, String status) {
 
@@ -157,17 +167,8 @@ for (String skill : requiredSkills) {
         application.setStatus(status.toUpperCase());
         applicationRepository.save(application);
 
-        // 🔥 Always recalculate
-        long acceptedCount = applicationRepository
-                .countByProjectPostIdAndStatus(project.getId(), "ACCEPTED");
-
-        if (acceptedCount >= project.getTeamSize()) {
-            project.setStatus("CLOSED");
-        } else {
-            project.setStatus("OPEN");
-        }
-        System.out.println("Accepted Count After Update: " + acceptedCount);
-        System.out.println("Team Size: " + project.getTeamSize());
+        //  Always recalculate
+        recalculateProjectStatus(project);
 
         projectPostRepository.save(project);
     }

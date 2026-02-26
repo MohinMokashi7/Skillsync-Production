@@ -29,7 +29,7 @@ public class ProjectPostDto {
     private String status; // "OPEN", "CLOSED"
 
     private String ownerName;
-
+    private String ownerEmail;
     private String category; // "HACKATHON", "STARTUP"
 
     private String location;

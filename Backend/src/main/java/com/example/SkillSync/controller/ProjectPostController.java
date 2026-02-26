@@ -25,6 +25,16 @@ public class ProjectPostController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdpost);
 
     }
+    @PutMapping("/{id}")
+    public ResponseEntity<ProjectPostDto> updateProject(
+            @PathVariable Long id,
+            @RequestBody ProjectPostDto dto,
+            Principal principal
+    ) {
+        return ResponseEntity.ok(
+                postService.updateMyProject(id, principal.getName(), dto)
+        );
+    }
 
     @GetMapping
     public ResponseEntity<List<ProjectPostDto>> showProject(Principal principal){

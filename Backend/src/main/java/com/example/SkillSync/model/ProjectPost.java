@@ -55,7 +55,8 @@ public class ProjectPost {
 
     // We'll add the link to RequiredRole later.
     @OneToMany(mappedBy = "projectPost",
-            cascade = CascadeType.ALL)
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
     private Set<RequiredRole> requiredRoles = new HashSet<>();
 
     @OneToMany(mappedBy = "projectPost", cascade = CascadeType.ALL)

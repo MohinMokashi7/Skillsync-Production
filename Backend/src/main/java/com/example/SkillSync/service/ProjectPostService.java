@@ -23,7 +23,9 @@ public class ProjectPostService {
     private final ProjectPostRepository projectPostRepository;
     private final RequiredRoleRepository requiredRoleRepository;
     private final UserRepository userRepository;
-//create project as owner
+    private final ApplicationService applicationService;
+
+    //create project as owner
     @Transactional
     public ProjectPostDto createPost(String owenerEmail,ProjectPostDto projectPostDto){
         User owner=userRepository.findByEmail(owenerEmail)
@@ -64,12 +66,61 @@ public class ProjectPostService {
         return mapToDto(savedpost);
     }
 
+    @Transactional
+    public ProjectPostDto updateMyProject(
+            Long projectId,
+            String ownerEmail,
+            ProjectPostDto projectPostDto
+    ) {
+
+        ProjectPost post = projectPostRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Project not found"));
+
+        if (!post.getOwner().getEmail().equals(ownerEmail)) {
+            throw new RuntimeException("You are not authorized to update this project");
+        }
+
+        // Update basic fields
+        post.setTitle(projectPostDto.getTitle());
+        post.setDescription(projectPostDto.getDescription());
+        post.setCategory(projectPostDto.getCategory());
+        post.setLocation(projectPostDto.getLocation());
+        post.setExpectedDuration(projectPostDto.getExpectedDuration());
+        post.setTeamSize(projectPostDto.getTeamSize());
+        post.setVisibility(projectPostDto.getVisibility());
+
+        // 🔥 Replace entire role list
+        post.getRequiredRoles().clear();
+
+        if (projectPostDto.getRequiredRoleDto() != null) {
+
+            for (RequiredRoleDto roleDto : projectPostDto.getRequiredRoleDto()) {
+
+                RequiredRole role = new RequiredRole();
+                role.setRoleName(roleDto.getRoleName());
+                role.setRequiredSkills(roleDto.getRequiredSkills());
+                role.setProjectPost(post);
+
+                post.getRequiredRoles().add(role);
+            }
+        }
+
+        applicationService.recalculateProjectStatus(post);
+
+
+        ProjectPost saved = projectPostRepository.save(post);
+
+        return mapToDto(saved);
+    }
+
+
     public List<ProjectPostDto> getMyProjects(String email) {
         List<ProjectPost> myPosts = projectPostRepository.findByOwnerEmail(email);
         return myPosts.stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
+
 
       //this is helper class where we are converting entity data to dto so we can show data on frontend
     private ProjectPostDto mapToDto(ProjectPost post){
@@ -82,6 +133,7 @@ public class ProjectPostService {
         dto.setLocation(post.getLocation());
         dto.setExpectedDuration(post.getExpectedDuration());
         dto.setOwnerName(post.getOwner().getName());
+        dto.setOwnerEmail(post.getOwner().getEmail());
         dto.setVisibility(post.getVisibility());
         dto.setTeamSize(post.getTeamSize());
 
